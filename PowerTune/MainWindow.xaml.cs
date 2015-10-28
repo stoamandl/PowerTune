@@ -26,20 +26,25 @@ namespace PowerTune
         {
             InitializeComponent();
             Thread worker = new Thread(Update);
-            worker.Start();
+            worker.Start(); //start Worker Thread
+            
         }
 
         private void Update()
-    {
-        // Simulate some work taking place 
-        Thread.Sleep(TimeSpan.FromSeconds(5));
-        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (ThreadStart)delegate ()
-                    {
+        {
+      
+            int counter = 0;
+            while (true) {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                counter++;
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (ThreadStart)delegate ()
+                        {
 
-                     textBox.Text = "Here is some new text.";
-                    }
-                      );
+                            textBox.Text = counter.ToString();
+                        }
+                          );
+        }
 
     }
 
