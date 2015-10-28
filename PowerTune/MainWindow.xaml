@@ -22,19 +22,19 @@
             <MenuItem Header="_File" FontSize="16">
                 <MenuItem Header="_Open..."/>
                 <MenuItem Header="Save as..."/>
-                <MenuItem Header="Exit"/>
+                <MenuItem Header="Exit" Click="MenuItem_Click_Exit"/>
             </MenuItem>
 
             <MenuItem Header="_Window" FontSize="16"></MenuItem>
 
             <MenuItem Header="_Setup" FontSize="16">
-                <MenuItem Header="Communicaton"/>
+                <MenuItem Header="Communicaton" Click="MenuItem_Click_Communication"/>
             </MenuItem>
 
             <MenuItem Header="_Help" FontSize="16"></MenuItem>
         </Menu>
 
 
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,29,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,92,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="152" Grid.Column="1"/>
     </Grid>
 </Window>

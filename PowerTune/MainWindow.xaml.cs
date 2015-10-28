@@ -43,9 +43,20 @@ namespace PowerTune
 
     }
 
-        private void menuExit_Click(object sender, RoutedEventArgs e)
+        
+        private void MenuItem_Click_Communication(object sender, RoutedEventArgs e)
         {
-            this.Close();
+
+            Window wdwSetupCom = new Setup_Window.SetupCom();
+            wdwSetupCom.Show(); 
+
+        }
+
+        private void MenuItem_Click_Exit(object sender, RoutedEventArgs e)
+        {
+
+            Close();
+
         }
     }
 }
