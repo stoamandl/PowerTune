@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace PowerTune
 {
@@ -23,6 +25,27 @@ namespace PowerTune
         public MainWindow()
         {
             InitializeComponent();
+            Thread worker = new Thread(Update);
+            worker.Start();
+        }
+
+        private void Update()
+    {
+        // Simulate some work taking place 
+        Thread.Sleep(TimeSpan.FromSeconds(5));
+        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (ThreadStart)delegate ()
+                    {
+
+                     textBox.Text = "Here is some new text.";
+                    }
+                      );
+
+    }
+
+        private void menuExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

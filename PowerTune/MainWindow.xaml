@@ -7,7 +7,34 @@
         mc:Ignorable="d"
         Title="PowerTune" Height="350" Width="525">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <UserControl/>
+
+        <Menu VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="3" Height="30" Background="#FFB9A6A6">
+            <MenuItem Header="_File" FontSize="16">
+                <MenuItem Header="_Open..."/>
+                <MenuItem Header="Save as..."/>
+                <MenuItem Header="Exit"/>
+            </MenuItem>
+
+            <MenuItem Header="_Window" FontSize="16"></MenuItem>
+
+            <MenuItem Header="_Setup" FontSize="16">
+                <MenuItem Header="Communicaton"/>
+            </MenuItem>
+
+            <MenuItem Header="_Help" FontSize="16"></MenuItem>
+        </Menu>
+
+
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,29,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
     </Grid>
-    
 </Window>
