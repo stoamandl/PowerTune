@@ -8,9 +8,10 @@
         Title="PowerTune" Height="350" Width="525">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="172*"/>
+            <ColumnDefinition Width="172*"/>
+            <ColumnDefinition Width="161*"/>
+            <ColumnDefinition Width="12*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -18,13 +19,16 @@
         </Grid.RowDefinitions>
         <UserControl/>
 
-        <Menu VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="3" Height="30" Background="#FFB9A6A6">
+        <Menu VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="4" Height="30" Background="#FFB9A6A6">
             <MenuItem Header="_File" FontSize="16">
                 <MenuItem Header="_Open..."/>
                 <MenuItem Header="Save as..."/>
                 <MenuItem Header="Exit" Click="MenuItem_Click_Exit"/>
             </MenuItem>
-
+            <MenuItem Header="_Logging" FontSize="16">
+                <MenuItem Header="_Start"/>
+                <MenuItem Header="S_top"/>
+            </MenuItem>
             <MenuItem Header="_Window" FontSize="16"></MenuItem>
 
             <MenuItem Header="_Setup" FontSize="16">
@@ -36,5 +40,10 @@
 
 
         <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,92,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="152" Grid.Column="1"/>
+        <StatusBar Grid.Row="1" Grid.ColumnSpan="4" Height="30" VerticalAlignment="Bottom" Background="#FFB9A6A6">
+            <StatusBarItem>
+                <TextBlock Name="sbStatus"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

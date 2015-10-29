@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Threading;
+using System.IO.Ports;
 
 namespace PowerTune
 {
@@ -25,16 +26,29 @@ namespace PowerTune
         public MainWindow()
         {
             InitializeComponent();
+            sbStatus.Text = "Offline";
+            
+            //Load Configuration from settings stored in user profile
+            libs.clsComSettings.strSelectCom = Properties.Settings.Default.ComPort;
+            libs.clsComSettings.strSelectedBaud = Properties.Settings.Default.BaudRate;
+
             Thread worker = new Thread(Update);
             worker.Start(); //start Worker Thread
+
+        }
+
+        private void getAdvData()
+        {
             
         }
 
+
         private void Update()
         {
-      
+
             int counter = 0;
-            while (true) {
+            while (true)
+            {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 counter++;
                 this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -44,16 +58,16 @@ namespace PowerTune
                             textBox.Text = counter.ToString();
                         }
                           );
+            }
+
         }
 
-    }
 
-        
         private void MenuItem_Click_Communication(object sender, RoutedEventArgs e)
         {
 
             Window wdwSetupCom = new Setup_Window.SetupCom();
-            wdwSetupCom.Show(); 
+            wdwSetupCom.Show();
 
         }
 

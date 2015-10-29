@@ -32,6 +32,19 @@ namespace PowerTune.Setup_Window
             {
                 cboComPorts.Items.Add(s);
             }
+
+            cboBaudRates.Items.Add(300);
+            cboBaudRates.Items.Add(600);
+            cboBaudRates.Items.Add(1200);
+            cboBaudRates.Items.Add(2400);
+            cboBaudRates.Items.Add(9600);
+            cboBaudRates.Items.Add(14400);
+            cboBaudRates.Items.Add(19200);
+            cboBaudRates.Items.Add(38400);
+            cboBaudRates.Items.Add(57600);
+            cboBaudRates.Items.Add(115200);
+            cboBaudRates.Items.ToString();
+
         }
 
         private void btnRescan_Click(object sender, RoutedEventArgs e)
@@ -49,8 +62,11 @@ namespace PowerTune.Setup_Window
         private void btnSelect_Click(object sender, RoutedEventArgs e)
         {
             libs.clsComSettings.strSelectCom = cboComPorts.Text;
-            Properties.Settings.Default["ComPort"] =  cboComPorts.Text;
+            Properties.Settings.Default["ComPort"] = cboComPorts.Text;
+            libs.clsComSettings.strSelectedBaud = cboBaudRates.Text;
+            Properties.Settings.Default["BaudRate"] = cboBaudRates.Text;
             Properties.Settings.Default.Save();
+
             this.Close();
         }
     }
