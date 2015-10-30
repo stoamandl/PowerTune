@@ -63,7 +63,7 @@ namespace PowerTune.Setup_Window
         {
             libs.clsComSettings.strSelectCom = cboComPorts.Text;
             Properties.Settings.Default["ComPort"] = cboComPorts.Text;
-            libs.clsComSettings.strSelectedBaud = cboBaudRates.Text;
+            libs.clsComSettings.strSelectedBaud = int.Parse(cboBaudRates.Text);
             Properties.Settings.Default["BaudRate"] = cboBaudRates.Text;
             Properties.Settings.Default.Save();
 

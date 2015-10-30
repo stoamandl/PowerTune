@@ -27,55 +27,72 @@ namespace PowerTune
         {
             InitializeComponent();
             sbStatus.Text = "Offline";
-            
+
             //Load Configuration from settings stored in user profile
             libs.clsComSettings.strSelectCom = Properties.Settings.Default.ComPort;
-            libs.clsComSettings.strSelectedBaud = Properties.Settings.Default.BaudRate;
+            libs.clsComSettings.strSelectedBaud = int.Parse(Properties.Settings.Default.BaudRate);
 
-            Thread worker = new Thread(Update);
+            Thread worker = new Thread(getAdvData);
             worker.Start(); //start Worker Thread
 
         }
 
         private void getAdvData()
         {
-            
-        }
-
-
-        private void Update()
-        {
-
-            int counter = 0;
-            while (true)
+            //open Serial Port with settings from clsComSettings class
+            if (libs.clsComSettings.strSelectCom == "" || libs.clsComSettings.strSelectedBaud == 0)
             {
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                counter++;
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (ThreadStart)delegate ()
-                        {
 
-                            textBox.Text = counter.ToString();
-                        }
-                          );
+                //System.Windows.Forms.MessageBox.Show("Please set comport und baudrate settings.");
+            }
+            else
+            {
+                SerialPort serialPort = new SerialPort(libs.clsComSettings.strSelectCom,
+                libs.clsComSettings.strSelectedBaud);
+
+                if (!serialPort.IsOpen)
+                {
+                    serialPort.Open();
+                }
             }
 
-        }
+
+}
 
 
-        private void MenuItem_Click_Communication(object sender, RoutedEventArgs e)
-        {
+private void Update()
+{
 
-            Window wdwSetupCom = new Setup_Window.SetupCom();
-            wdwSetupCom.Show();
+    int counter = 0;
+    while (true)
+    {
+        Thread.Sleep(TimeSpan.FromSeconds(1));
+        counter++;
+        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (ThreadStart)delegate ()
+                {
 
-        }
+                    textBox.Text = counter.ToString();
+                }
+                  );
+    }
 
-        private void MenuItem_Click_Exit(object sender, RoutedEventArgs e)
-        {
+}
 
-            Close();
 
-        }
+private void MenuItem_Click_Communication(object sender, RoutedEventArgs e)
+{
+
+    Window wdwSetupCom = new Setup_Window.SetupCom();
+    wdwSetupCom.Show();
+
+}
+
+private void MenuItem_Click_Exit(object sender, RoutedEventArgs e)
+{
+
+    Close();
+
+}
     }
 }
