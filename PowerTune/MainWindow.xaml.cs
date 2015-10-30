@@ -32,67 +32,75 @@ namespace PowerTune
             libs.clsComSettings.strSelectCom = Properties.Settings.Default.ComPort;
             libs.clsComSettings.strSelectedBaud = int.Parse(Properties.Settings.Default.BaudRate);
 
-            Thread worker = new Thread(getAdvData);
-            worker.Start(); //start Worker Thread
-
         }
 
         private void getAdvData()
         {
             //open Serial Port with settings from clsComSettings class
+
+
+
+            SerialPort serialPort = new SerialPort(libs.clsComSettings.strSelectCom,
+            libs.clsComSettings.strSelectedBaud);
+
+            if (!serialPort.IsOpen)
+            {
+                serialPort.Open();
+            }
+
+            
+        }   
+
+
+        private void Update()
+        {
+
+            int counter = 0;
+            while (true)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                counter++;
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (ThreadStart)delegate ()
+                        {
+
+                            textBox.Text = counter.ToString();
+                        }
+                          );
+            }
+
+        }
+
+
+        private void MenuItem_Click_Communication(object sender, RoutedEventArgs e)
+        {
+
+            Window wdwSetupCom = new Setup_Window.SetupCom();
+            wdwSetupCom.Show();
+
+        }
+
+        private void MenuItem_Click_Exit(object sender, RoutedEventArgs e)
+        {
+
+            Close();
+
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Thread serialWorker = new Thread(getAdvData); //instanciate a new thread
+
             if (libs.clsComSettings.strSelectCom == "" || libs.clsComSettings.strSelectedBaud == 0)
             {
-                //implement this feature in button that calls this thread. otherwise thread protection will throw an excepton.
-                //System.Windows.Forms.MessageBox.Show("Please set comport und baudrate settings.");
+                //when serial settings are not set, bring configuration dialog up.
+                Window wdwSetupCom = new Setup_Window.SetupCom();
+                wdwSetupCom.Show();
             }
             else
             {
-                SerialPort serialPort = new SerialPort(libs.clsComSettings.strSelectCom,
-                libs.clsComSettings.strSelectedBaud);
-
-                if (!serialPort.IsOpen)
-                {
-                    serialPort.Open();
-                }
+                serialWorker.Start(); //start Worker Thread
             }
-
-
-}
-
-
-private void Update()
-{
-
-    int counter = 0;
-    while (true)
-    {
-        Thread.Sleep(TimeSpan.FromSeconds(1));
-        counter++;
-        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-
-                    textBox.Text = counter.ToString();
-                }
-                  );
-    }
-
-}
-
-
-private void MenuItem_Click_Communication(object sender, RoutedEventArgs e)
-{
-
-    Window wdwSetupCom = new Setup_Window.SetupCom();
-    wdwSetupCom.Show();
-
-}
-
-private void MenuItem_Click_Exit(object sender, RoutedEventArgs e)
-{
-
-    Close();
-
-}
+        }
     }
 }
