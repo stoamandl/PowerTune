@@ -42,7 +42,7 @@ namespace PowerTune
             //open Serial Port with settings from clsComSettings class
             if (libs.clsComSettings.strSelectCom == "" || libs.clsComSettings.strSelectedBaud == 0)
             {
-
+                //implement this feature in button that calls this thread. otherwise thread protection will throw an excepton.
                 //System.Windows.Forms.MessageBox.Show("Please set comport und baudrate settings.");
             }
             else
