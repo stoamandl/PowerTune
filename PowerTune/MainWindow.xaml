@@ -26,8 +26,8 @@
                 <MenuItem Header="Exit" Click="MenuItem_Click_Exit"/>
             </MenuItem>
             <MenuItem Header="_Logging" FontSize="16">
-                <MenuItem Header="_Start" Click="MenuItem_Click"/>
-                <MenuItem Header="S_top"/>
+                <MenuItem Header="_Start" Click="MenuItem_Click_Serial_Start"/>
+                <MenuItem Header="S_top" Click="MenuItem_Click_1"/>
             </MenuItem>
             <MenuItem Header="_Window" FontSize="16"></MenuItem>
 
