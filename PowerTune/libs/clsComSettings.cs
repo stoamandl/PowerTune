@@ -6,5 +6,6 @@ namespace PowerTune.libs
     {
         public static String strSelectCom = null;
         public static int strSelectedBaud = 0;
+        public static bool portIsOpen = false;
     }
 }
