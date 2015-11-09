@@ -4,8 +4,9 @@ namespace PowerTune.libs
 {
     class clsComSettings
     {
-        public static String strSelectCom = null;
-        public static int strSelectedBaud = 0;
-        public static bool portIsOpen = false;
+        public static String strSelectCom { get; set; }
+
+        public static int strSelectedBaud { get; set; }
+        
     }
 }

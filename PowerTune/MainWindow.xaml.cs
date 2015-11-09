@@ -15,13 +15,18 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Threading;
 using System.IO.Ports;
+using System.ComponentModel;
 
 namespace PowerTune
 {
     public partial class MainWindow : Window
     {
+        BackgroundWorker workerGetAdvData;
+
         public MainWindow()
         {
+            workerGetAdvData = new BackgroundWorker();
+
             InitializeComponent();
             sbStatus.Text = "Footer";
 
@@ -54,12 +59,17 @@ namespace PowerTune
 
             ClsGetAdvData getAdvData = new ClsGetAdvData(); //create a new instance of ClsGetAdvData Class
 
-            getAdvData.dataRequested += GetAdvData_dataRequested; //add event trigger 
+            ClsComSettingMain clsComSettingMain = new ClsComSettingMain();
 
+            clsComSettingMain.comport = libs.clsComSettings.strSelectCom;
+            clsComSettingMain.baudRate = libs.clsComSettings.strSelectedBaud;
 
-            //define thread with lamdba expression, "normal" definition does not support more than one parameter.
-            Thread threadGetAdvData = new Thread(() => getAdvData.request(libs.clsComSettings.strSelectCom, libs.clsComSettings.strSelectedBaud));
-            threadGetAdvData.IsBackground = true;
+            workerGetAdvData.DoWork += new DoWorkEventHandler(getAdvData.request_DoWork);
+            //workerGetAdvData.RunWorkerCompleted += new RunWorkerCompletedEventHandler(workerGetAdvData_RunWorkerCompleted);
+
+            workerGetAdvData.WorkerReportsProgress = true;
+            workerGetAdvData.WorkerSupportsCancellation = true;
+
 
             if (libs.clsComSettings.strSelectCom == "" || libs.clsComSettings.strSelectedBaud == 0)
             {
@@ -69,18 +79,16 @@ namespace PowerTune
             }
             else
             {
-                threadGetAdvData.Start();
+                workerGetAdvData.RunWorkerAsync(clsComSettingMain);
             }
-        }
-
-        private void GetAdvData_dataRequested()
-        {
-
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
-
+            if (workerGetAdvData.IsBusy)
+            {
+                workerGetAdvData.CancelAsync();
+            }
         }
     }
 }
@@ -90,33 +98,44 @@ namespace PowerTune
 
 class ClsGetAdvData
 {
-    public delegate void serialDataRequested();
-    public delegate void delRequestData(string comPort, int baudRate);
-    public event serialDataRequested dataRequested; //event that will be fired when data is requested to inform parser
-
-    private bool serialPfcReadyToRead = true; //this bool is set when data is ready to be requested and old data is processed out of serial buffer
-
-
     //open Serial Port with settings from clsComSettings class
     byte[] adv_request = { 0xF0, 0x02, 0x0D };   //Command for requesting advanced sensor data from PFC
-    public void request(string comPort, int baudRate)
+
+    public void request_DoWork(object sender, DoWorkEventArgs e)
     {
+        ClsComSettingMain clsComSettingMain = (ClsComSettingMain)e.Argument;
+        string comPort = clsComSettingMain.comport;
+        int baudRate = clsComSettingMain.baudRate;
 
-        SerialPort serialPort = new SerialPort(comPort, baudRate);
-
-        if (serialPort.IsOpen != true)
+        if (comPort != null && baudRate != 0)
         {
+            SerialPort serialPort = new SerialPort(comPort, baudRate);
             serialPort.Open();
-        }
-        if (serialPfcReadyToRead)
-        {
-            serialPort.Write(adv_request, 0, 3); // Write byte array to serial port, with no offset, all 3 bytes
 
-            serialPfcReadyToRead = false;    //set to false till data is processed out of buffer
-                                             //Here a event should be fired for a th
-            dataRequested(); //Fire event!
+            while (true)
+            {
+                if (e.Cancel)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+                else
+                {
+                    serialPort.Write(adv_request, 0, 3); // Write byte array to serial port, with no offset, all 3 bytes
+                    Thread.Sleep(500);
+                }
+            }
         }
-        serialPort.Close();
+
     }
 
+
+}
+
+
+
+class ClsComSettingMain //this class is parameters for public void request_DoWork(object sender, DoWorkEventArgs e)
+{
+    public string comport { get; set; }
+    public int baudRate { get; set; }
 }
