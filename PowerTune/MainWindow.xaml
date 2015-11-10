@@ -27,7 +27,7 @@
             </MenuItem>
             <MenuItem Header="_Logging" FontSize="16">
                 <MenuItem Header="_Start" Click="MenuItem_Click_Serial_Start"/>
-                <MenuItem Header="S_top" Click="MenuItem_Click_1"/>
+                <MenuItem Header="S_top" Click="MenuItem_Click_Serial_Stop"/>
             </MenuItem>
             <MenuItem Header="_Window" FontSize="16"></MenuItem>
 
@@ -37,9 +37,6 @@
 
             <MenuItem Header="_Help" FontSize="16"></MenuItem>
         </Menu>
-
-
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,92,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="152" Grid.Column="1"/>
         <StatusBar Grid.Row="1" Grid.ColumnSpan="4" Height="30" VerticalAlignment="Bottom" Background="#FFB9A6A6">
             <StatusBarItem>
                 <TextBlock Name="sbStatus"/>
