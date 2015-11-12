@@ -116,10 +116,11 @@ namespace PowerTune
             {
                 sbStatus.Text = "Offline";
             }
-
-
-            // parser could be triggered here..?
+           
         }
+
+
+
     }
 
 
@@ -162,11 +163,18 @@ class ClsGetAdvData
                 else
                 {
                     serialPort.Write(adv_request, 0, 3); // Write byte array to serial port, with no offset, all 3 bytes
-                    Thread.Sleep(500);
+                    // the parser should be here triggert, when the array is complete. This could be checked by checksum of array
                 }
             }
         }
 
+    }
+
+    public void process_DoWork(object sender, DoWorkEventArgs e)
+    {
+        // this function should parse the serial In Data
+        // it should parse multiple versions of arrays
+        // checksum test if package is transfered successfull
     }
 
 
