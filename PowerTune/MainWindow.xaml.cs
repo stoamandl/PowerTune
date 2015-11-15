@@ -172,31 +172,30 @@ class ClsGetAdvData
                     serialPort.DiscardInBuffer(); // Eingangspuffer leeren
                     serialPort.Write(adv_request, 0, 3); // Write byte array to serial port, with no offset, all 3 bytes
 
-
-
                 }
             }
         }
 
     }
 
-    public void process_DoWorkHandler(object sender,SerialDataReceivedEventArgs e)
+    public void process_DoWorkHandler(object sender, SerialDataReceivedEventArgs e)
     {
         // this function should parse the serial In Data
         // it should parse multiple versions of arrays
         // checksum test if package is transfered successfull
+        // Function is still not robust enough
 
-        // the parser should be here triggert, when the array is complete. This could be checked by checksum of array
+        Thread.Sleep(100); //sleep for 100ms to be sure all data from PFC is received
         SerialPort serialPort = (SerialPort)sender;
 
         pfc_response[0] = (byte)serialPort.ReadByte(); //First byte returns first byte of request, e.g. 0xF0 for advanced data
         pfc_response[1] = (byte)serialPort.ReadByte(); //Second byte indicates remaining size from data package, w/o first byte!!
-        pfc_SizeOfPackage = (int)pfc_response[1];
+        pfc_SizeOfPackage = pfc_response[1];
         for (int i = 0; pfc_SizeOfPackage <= i; i++) //loop trough array to get all data from serialInBuffer
         {
             pfc_response[i + 2] = (byte)serialPort.ReadByte();
         }
-        //calculate Checksum from pfc_package: 0xFF minus each Package = last byte in array, if not -> discard
+        //calculate Checksum from pfc_package: 0xFF minus each byte = last byte in array, if not -> discard
         pfc_checkSum = 0xFF;
 
         for (int i = 0; pfc_SizeOfPackage + 1 <= i; i++)
