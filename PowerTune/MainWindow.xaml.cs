@@ -40,11 +40,11 @@ namespace PowerTune
 
 
             workerGetAdvData.DoWork += new DoWorkEventHandler(getAdvData.request_DoWork);
-            workerGetAdvData.ProgressChanged += new ProgressChangedEventHandler(request_ProgressChanged); 
+            workerGetAdvData.ProgressChanged += new ProgressChangedEventHandler(request_ProgressChanged);
 
             InitializeComponent();
             sbStatus.Text = "Offline";
-            
+
 
 
             //Load Configuration from settings stored in user profile
@@ -106,9 +106,9 @@ namespace PowerTune
 
         public void request_ProgressChanged(object sender, ProgressChangedEventArgs e) //this function is need to set statusbartext
         {
-            
 
-            if(e.ProgressPercentage == 0)
+
+            if (e.ProgressPercentage == 0)
             {
                 sbStatus.Text = "Logging active...";
             }
@@ -116,11 +116,14 @@ namespace PowerTune
             {
                 sbStatus.Text = "Offline";
             }
-           
+
         }
 
-
-
+        private void MenuItem_Click_Debugging(object sender, RoutedEventArgs e)
+        {
+            Window wdwDebugging = new Setup_Window.Debugging_Window();
+            wdwDebugging.Show();
+        }
     }
 
 
@@ -133,6 +136,9 @@ class ClsGetAdvData
 {
     //open Serial Port with settings from clsComSettings class
     byte[] adv_request = { 0xF0, 0x02, 0x0D };   //Command for requesting advanced sensor data from PFC
+    byte[] pfc_response = null; //Array for Data received from pfc
+    int pfc_SizeOfPackage = 0;
+    int pfc_checkSum = 0;
 
 
 
@@ -150,6 +156,7 @@ class ClsGetAdvData
         if (comPort != null && baudRate != 0)
         {
             SerialPort serialPort = new SerialPort(comPort, baudRate);
+            serialPort.DataReceived += new SerialDataReceivedEventHandler(process_DoWorkHandler);
             serialPort.Open();
 
             while (true)
@@ -162,19 +169,45 @@ class ClsGetAdvData
                 }
                 else
                 {
+                    serialPort.DiscardInBuffer(); // Eingangspuffer leeren
                     serialPort.Write(adv_request, 0, 3); // Write byte array to serial port, with no offset, all 3 bytes
-                    // the parser should be here triggert, when the array is complete. This could be checked by checksum of array
+
+
+
                 }
             }
         }
 
     }
 
-    public void process_DoWork(object sender, DoWorkEventArgs e)
+    public void process_DoWorkHandler(object sender,SerialDataReceivedEventArgs e)
     {
         // this function should parse the serial In Data
         // it should parse multiple versions of arrays
         // checksum test if package is transfered successfull
+
+        // the parser should be here triggert, when the array is complete. This could be checked by checksum of array
+        SerialPort serialPort = (SerialPort)sender;
+
+        pfc_response[0] = (byte)serialPort.ReadByte(); //First byte returns first byte of request, e.g. 0xF0 for advanced data
+        pfc_response[1] = (byte)serialPort.ReadByte(); //Second byte indicates remaining size from data package, w/o first byte!!
+        pfc_SizeOfPackage = (int)pfc_response[1];
+        for (int i = 0; pfc_SizeOfPackage <= i; i++) //loop trough array to get all data from serialInBuffer
+        {
+            pfc_response[i + 2] = (byte)serialPort.ReadByte();
+        }
+        //calculate Checksum from pfc_package: 0xFF minus each Package = last byte in array, if not -> discard
+        pfc_checkSum = 0xFF;
+
+        for (int i = 0; pfc_SizeOfPackage + 1 <= i; i++)
+        {
+            pfc_checkSum = pfc_checkSum - pfc_response[i];
+        }
+        if (pfc_checkSum == pfc_response[pfc_SizeOfPackage + 1])
+        {
+
+        }
+
     }
 
 

@@ -33,6 +33,7 @@
 
             <MenuItem Header="_Setup" FontSize="16">
                 <MenuItem Header="Communicaton" Click="MenuItem_Click_Communication"/>
+                <MenuItem Header="Debugging" Click="MenuItem_Click_Debugging"/>
             </MenuItem>
 
             <MenuItem Header="_Help" FontSize="16"></MenuItem>
