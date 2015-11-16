@@ -142,6 +142,31 @@ class ClsGetAdvData
     int pfc_SizeOfPackage = 0;
     int pfc_checkSum = 0;
 
+    public struct Pfc_parsedData
+    {
+        public int rpm;
+        public int pim;
+        public float pim_v;
+        public float tps_v;
+        public float inj_fp;
+        public int inj;
+        public int igl;
+        public int igt;
+        public int fluel_temp;
+        public int oiler;
+        public int precontrol;
+        public int wastegate;
+        public int watertemp;
+        public int airtemp;
+        public int knock;
+        public float bat_voltage;
+        public int kph;
+        public int unknown;
+        public int o2;
+        public int unknown2;
+        public int injms;
+
+    }
 
 
     public void request_DoWork(object sender, DoWorkEventArgs e)
@@ -149,7 +174,6 @@ class ClsGetAdvData
         var worker = (BackgroundWorker)sender;
 
         worker.ReportProgress(0);
-
 
         ClsComSettingMain clsComSettingMain = (ClsComSettingMain)e.Argument;
         string comPort = clsComSettingMain.comport;
@@ -182,17 +206,17 @@ class ClsGetAdvData
 
     public void process_DoWorkHandler(object sender, SerialDataReceivedEventArgs e)
     {
-        // this function should parse the serial In Data
-        // it should parse multiple versions of arrays
-        // checksum test if package is transfered successfull
-        // Function is still not robust enough
 
-        Thread.Sleep(100); //sleep for 100ms to be sure all data from PFC is received
+
+    // checksum test if package is transfered successfull
+    // Function is still not robust enough
+
+    Thread.Sleep(20); //sleep for 100ms to be sure all data from PFC is received
         SerialPort serialPort = (SerialPort)sender;
 
         pfc_response[0] = (byte)serialPort.ReadByte(); //First byte returns first byte of request, e.g. 0xF0 for advanced data
         pfc_response[1] = (byte)serialPort.ReadByte(); //Second byte indicates remaining size from data package, w/o first byte!!
-        pfc_SizeOfPackage = pfc_response[1];
+        pfc_SizeOfPackage = pfc_response[1] -1; // Second byte is already red, so remainingbytes minus 1
         for (int i = 0; pfc_SizeOfPackage <= i; i++) //loop trough array to get all data from serialInBuffer
         {
             pfc_response[i + 2] = (byte)serialPort.ReadByte();
@@ -200,23 +224,56 @@ class ClsGetAdvData
         //calculate Checksum from pfc_package: 0xFF minus each byte = last byte in array, if not -> discard
         pfc_checkSum = 0xFF;
 
-        for (int i = 0; pfc_SizeOfPackage + 1 <= i; i++)
+        for (int i = 0; pfc_SizeOfPackage <= i; i++)
         {
             pfc_checkSum = pfc_checkSum - pfc_response[i];
         }
-        if (pfc_checkSum == pfc_response[pfc_SizeOfPackage + 1])
+        if (pfc_checkSum == pfc_response[pfc_SizeOfPackage + 1]) //check the checksum
         {
+            parse_serialData(pfc_response); //call parser
+        }
+
+    }
+
+    void parse_serialData(byte[] pfc_response)
+    {
+        Pfc_parsedData pfc_parsedData = new Pfc_parsedData();
+        // this function should parse the serial In Data
+        // it should parse multiple versions of arrays
+        if (pfc_response[0] == 0xF0) // Check for Package Type
+        {
+
+            pfc_parsedData.rpm = BitConverter.ToInt16(pfc_response, 2);
+            pfc_parsedData.pim = BitConverter.ToInt16(pfc_response, 4);
+            pfc_parsedData.pim_v = BitConverter.ToInt16(pfc_response, 6);
+            pfc_parsedData.tps_v = BitConverter.ToInt16(pfc_response, 8);
+            pfc_parsedData.inj_fp = BitConverter.ToInt16(pfc_response, 10);
+            pfc_parsedData.inj = BitConverter.ToInt16(pfc_response, 12);
+            pfc_parsedData.igl = (int)pfc_response[13];
+            pfc_parsedData.igt = (int)pfc_response[14];
+            pfc_parsedData.fluel_temp = (int)pfc_response[15];
+            pfc_parsedData.oiler = (int)pfc_response[16];
+            pfc_parsedData.precontrol = (int)pfc_response[17];
+            pfc_parsedData.wastegate = (int)pfc_response[18];
+            pfc_parsedData.watertemp = (int)pfc_response[19];
+            pfc_parsedData.airtemp = (int)pfc_response[20];
+            pfc_parsedData.knock = (int)pfc_response[21];
+            pfc_parsedData.bat_voltage = (int)pfc_response[22];
+            pfc_parsedData.kph = BitConverter.ToInt16(pfc_response, 23);
+            pfc_parsedData.unknown = BitConverter.ToInt16(pfc_response, 25);
+            pfc_parsedData.o2 = (int)pfc_response[26];
+            pfc_parsedData.unknown2 = (int)pfc_response[27];
+            pfc_parsedData.injms = BitConverter.ToInt16(pfc_response, 28);
 
         }
 
     }
 
-
 }
 
 
 
-class ClsComSettingMain //this class is parameters for public void request_DoWork(object sender, DoWorkEventArgs e)
+class ClsComSettingMain //this class has the parameters for public void request_DoWork(object sender, DoWorkEventArgs e)
 {
     public string comport { get; set; }
     public int baudRate { get; set; }
