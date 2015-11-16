@@ -48,9 +48,11 @@ namespace PowerTune
 
 
             //Load Configuration from settings stored in user profile
-            libs.clsComSettings.strSelectCom = Properties.Settings.Default.ComPort;
-            libs.clsComSettings.strSelectedBaud = int.Parse(Properties.Settings.Default.BaudRate);
-
+            if (Properties.Settings.Default.ComPort != null && Properties.Settings.Default.BaudRate != null)
+            {
+                libs.clsComSettings.strSelectCom = Properties.Settings.Default.ComPort;
+                libs.clsComSettings.strSelectedBaud = int.Parse(Properties.Settings.Default.BaudRate);
+            }
         }
 
 
